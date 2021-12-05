@@ -1,24 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import * as React from "react";
+import { Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
+import "./App.css";
+import About from "./pages/About/About";
+import Home from "./pages/Home/Home";
+
+const queryClient = new QueryClient();
+export const Context = React.createContext(null);
 
 function App() {
+  const [deferredPrompt, setDeferredPrompt] = React.useState(null);
+
+  React.useEffect(() => {
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      console.log("Install Prompt fired");
+      setDeferredPrompt(e);
+    })
+  }, [])
+
+  const savePrompt = val => {
+    setDeferredPrompt(val);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className="App">
+        <QueryClientProvider client={queryClient}>
+          <Context.Provider value={{ installPrompt: { deferredPrompt, savePrompt }}}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="about" element={<About />} />
+            </Routes>
+          </Context.Provider>
+        </QueryClientProvider>
+      </div>
   );
 }
 
