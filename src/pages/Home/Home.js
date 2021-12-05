@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useQuery } from "react-query";
 import AppShell from "../../components/AppShell/AppShell";
 import FloatingButton from "../../components/FloatingButton/FloatingButton";
 import PostList from "../../components/PostList/PostList";

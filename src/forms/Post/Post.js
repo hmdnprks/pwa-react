@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { dataURItoBlob } from "../../utils";
 import { Context } from '../../App';
 
@@ -19,16 +19,7 @@ function Post(props){
   const { installPrompt } = useContext(Context);
   const { deferredPrompt, savePrompt }  = installPrompt;
 
-  useEffect(() => {
-    if(openForm){
-      initMedia();
-      initLocation();
-    } else {
-      stopVideo();
-    }
-  }, [openForm, useFrontCamera]);
-
-  const initMedia = () => {
+  const initMedia = useCallback(() => {
     if(!('mediaDevices' in navigator)){
       navigator.mediaDevices = {};
     }
@@ -57,7 +48,16 @@ function Post(props){
       setPlayStream(false);
       setShowImagePicker(true);
     })
-  }
+  }, [useFrontCamera]);
+
+  useEffect(() => {
+    if(openForm){
+      initMedia();
+      initLocation();
+    } else {
+      stopVideo();
+    }
+  }, [openForm, useFrontCamera, initMedia]);
 
   const initLocation = () => {
     if(!('geolocation' in navigator)) {
